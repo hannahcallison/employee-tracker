@@ -1,13 +1,14 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const consTable = require('console.table');
-const { left } = require('inquirer/lib/utils/readline');
 const roles =[];
 const roleIdNum =[];  
 const mgr =[];
 const mgrIdNum =[];
 const dpt = [];
 const dptIdNum = [];
+const emp =[];
+const empIdNum = [];
 require('dotenv').config();
 
 
