@@ -2,13 +2,7 @@ const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const consTable = require('console.table');
 require('dotenv').config();
-// View All Employees
-// Add Employee
-// Update Employee Role
-// View All Roles
-// Add Role
-// View All Departments
-// Add Department
+
 
 const db = mysql.createConnection(
     {
@@ -32,8 +26,38 @@ function start (){
         'Add Role',
         'View All Departments',
         'Add Department',
+        'Quit'
       ],
       name: 'choice'
     }
-  ])
+  ]).then(answers => {
+    switch(answers.choice){
+      case 'View All Employees':
+        // employeeInfo();
+        break;
+      case 'Add Employee':
+        // addEmployee();
+        break;
+      case 'Update Employee Role':
+        // updateEmployee();
+        break;
+      case 'View All Roles':
+        // viewRoles();
+        break;
+      case 'Add Role':
+        // addRole();
+        break;
+      case 'View All Departments':
+        // allDepartments();
+        break;
+      case 'Add Department':
+        // addDepartment;
+        break;
+      case 'Quit':
+        // return;??
+        break;
+    }
+  })
 }
+
+// db.query???
