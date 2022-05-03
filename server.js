@@ -4,7 +4,7 @@ const consTable = require('console.table');
 require('dotenv').config();
 
 
-const db = mysql.createConnection(
+const db_connect = mysql.createConnection(
     {
       host: 'localhost',
       database: process.env.DB_NAME,
@@ -54,10 +54,19 @@ function start (){
         // addDepartment;
         break;
       case 'Quit':
-        // return;??
+        db_connect.end;
         break;
     }
   })
 }
 
+
+function employeeInfo(){
+
+}
 // db.query???
+// connection??
+
+
+start();
+
