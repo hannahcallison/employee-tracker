@@ -71,7 +71,62 @@ function employeeInfo(){
 }
 
 function addEmployee(){
-
+  inquirer.prompt([
+    {
+      type: "input",
+      message: "First Name: ",
+      name: "firstName",
+    },
+    {
+      type: "input",
+      message: "Last Name: ",
+      name: "lastName",
+    },
+    {
+      type: "list",
+      message: "Employee Role ID: ",
+      choices: ['Sales Lead', 'Sales Person', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer'],
+      name: "role",
+    },
+  ]).then(data => {
+    switch(data.role){
+      case 'Sales Lead':
+        data.role = '1';
+        manager_id = null;
+        break;
+      case 'Sales Person':
+        data.role = '2';
+        manager_id = '1';
+        break;
+      case 'Lead Engineer':
+        data.role = '3';
+        manager_id = null;
+        break;
+      case 'Software Engineer':
+        data.role = '4';
+        manager_id = '3';
+        break;
+      case 'Account Manager':
+        data.rol ='5';
+        manager_id = null;
+        break;
+      case 'Accountant':
+        data.role = '6';
+        manager_id = '5';
+        break;
+      case 'Legal Team Lead':
+        data.role = '7';
+        manager_id = null;
+        break;
+      case 'Lawyer':
+        data.role ='8';
+        manager_id = '7';
+        break;
+    }
+    db_connect.promise().query('INSERT INTO employee SET ?', {first_name: data.firstName, last_name: data.lastName, role_id: data.role, manager_id}).then(([data]) => {
+    start();
+    })
+  }).catch(err => console.log(err))
 }
 
 function viewRoles(){
