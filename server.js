@@ -42,7 +42,7 @@ function start (){
         addEmployee();
         break;
       case 'Update Employee Role':
-        // updateEmployee();
+        updateEmployee();
         break;
       case 'View All Roles':
         viewRoles();
@@ -129,6 +129,58 @@ function addEmployee(){
   }).catch(err => console.log(err))
 }
 
+// function updateEmployee(){
+//   inquirer.prompt([
+//     {
+//       type: "list",
+//       message: "Update Profile for:",
+//       choices: ['John Doe', 'Mike Chan', 'Ashley Rodriguez', 'Kevin Tupik', 'Kunal Singh', 'Malia Brown', 'Sarah Lourd', 'Tom Allen'],
+//       name: 'profile',
+//     },
+//     {
+//       type: 'list',
+//       message: 'New Role: ',
+//       choices: ['Sales Lead', 'Sales Person', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer'],
+//       name: 'newRole'
+//     }
+//   ]).then(data => {
+//     switch(data.profile){
+//       case 'John Doe':
+//         data.profile = 'John';
+//         break;
+//       case 'Mike Chan':
+//         data.profile = '2';
+//         break;
+//       case 'Ashley Rodriguez':
+//         data.profile = '3';
+//         break;
+//       case 'Kevin Tupik':
+//         data.profile = '4';
+//         break;
+//       case 'Kunal Singh':
+//         data.rol ='5';
+//         break;
+//       case 'Malia Brown':
+//         data.profile = '6';
+//         break;
+//       case 'Sarah Lourd':
+//         data.profile = '7';
+//         break;
+//       case 'Tom Allen':
+//         data.profile ='8';
+//         break;
+//     }
+//     switch(data.newRole){
+//       case 'Salesperson':
+//       data.newRole = '2';
+//       break;
+//     }
+//     db_connect.promise().query('UPDATE employee SET ?  WHERE ? ', {role_id: data.newRole, first_name: data.profile}).then(([data]) => {
+//     start();
+//     })
+//   }).catch(err => console.log(err))
+// }
+
 function viewRoles(){
   db_connect.promise().query('SELECT * FROM role').then(([data]) => {
     console.table(data)
@@ -182,33 +234,6 @@ function addDepartment(){
     })
   }).catch(err => console.log(err))
 }
-
-
-
-
-
-
-// db.query???
-// connection??
-// .promise()
-// UPDATE
-
-
-// Query database
-// db.query('SELECT * FROM favorite_books', function (err, results) {
-//   console.log(results);
-// });
-
-// SELECT *
-// FROM course_names
-// JOIN department ON course_names.department = department.id;
-
-// SELECT movies.movie_name AS movie, reviews.review
-// FROM reviews
-// LEFT JOIN movies
-// ON reviews.movie_id = movies.id
-// ORDER BY movies.movie_name;
-
 
 start();
 
