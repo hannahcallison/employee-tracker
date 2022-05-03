@@ -14,6 +14,7 @@ const db_connect = mysql.createConnection(
 );
 
 function start (){
+  console.log('Welcome to our Employee Tracker\n===================')
   inquirer.prompt([
     {
       type: 'list',
@@ -62,11 +63,11 @@ function start (){
 
 
 function employeeInfo(){
-
+  
 }
 // db.query???
 // connection??
-
+// .promise()
 
 start();
 
