@@ -1,7 +1,15 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const consTable = require('console.table');
+const { left } = require('inquirer/lib/utils/readline');
+const roles =[];
+const roleIdNum =[];  
+const mgr =[];
+const mgrIdNum =[];
+const dpt = [];
+const dptIdNum = [];
 require('dotenv').config();
+
 
 
 const db_connect = mysql.createConnection(
@@ -14,7 +22,7 @@ const db_connect = mysql.createConnection(
 console.log(`Connected to the employee_db database.`)
 );
 
-console.log('Welcome to our Employee Tracker\n===================')
+console.log('\n===============================\nWelcome to our Employee Tracker\n===============================\n')
 
 function start (){
   inquirer.prompt([
@@ -71,6 +79,22 @@ function employeeInfo(){
 }
 
 function addEmployee(){
+  db_connect.promise().query('SELECT * FROM role').then(([data]) => {
+
+    for (let i = 0; i < data.length; i++) {
+     roles.push(data[i].title);
+     roleIdNum.push(data[i].id);
+    }
+  }).catch(err => console.log(err))
+
+  db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
+    for (let i = 0; i < data.length; i++) {
+     mgr.push(`${data[i].first_name} ${data[i].last_name}`);
+     mgrIdNum.push(data[i].id);
+    }
+    mgr.push('None')
+  }).catch(err => console.log(err))
+
   inquirer.prompt([
     {
       type: "input",
@@ -85,101 +109,35 @@ function addEmployee(){
     {
       type: "list",
       message: "Employee Role ID: ",
-      choices: ['Sales Lead', 'Sales Person', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer'],
+      choices: roles,
       name: "role",
     },
-  ]).then(data => {
-    switch(data.role){
-      case 'Sales Lead':
-        data.role = '1';
-        manager_id = null;
-        break;
-      case 'Sales Person':
-        data.role = '2';
-        manager_id = '1';
-        break;
-      case 'Lead Engineer':
-        data.role = '3';
-        manager_id = null;
-        break;
-      case 'Software Engineer':
-        data.role = '4';
-        manager_id = '3';
-        break;
-      case 'Account Manager':
-        data.rol ='5';
-        manager_id = null;
-        break;
-      case 'Accountant':
-        data.role = '6';
-        manager_id = '5';
-        break;
-      case 'Legal Team Lead':
-        data.role = '7';
-        manager_id = null;
-        break;
-      case 'Lawyer':
-        data.role ='8';
-        manager_id = '7';
-        break;
+    {
+      type: "list",
+      message: "Employee Manager: ",
+      choices: mgr,
+      name: 'mgr'
     }
-    db_connect.promise().query('INSERT INTO employee SET ?', {first_name: data.firstName, last_name: data.lastName, role_id: data.role, manager_id}).then(([data]) => {
-    start();
-    })
-  }).catch(err => console.log(err))
+  ]).then(data => {
+    if (data.mgr === 'None') {
+      let roleId = roles.indexOf(data.role) + 1
+      let mgrId = null;
+      db_connect.promise().query('INSERT INTO employee SET ?', {first_name: data.firstName, last_name: data.lastName, role_id: roleId, manager_id: mgrId}).then(([data]) => {
+        employeeInfo();
+        }).catch(err => console.log(err))
+    } else{
+      let roleId = roles.indexOf(data.role) + 1
+      let mgrId = mgr.indexOf(data.mgr) + 1
+      db_connect.promise().query('INSERT INTO employee SET ?', {first_name: data.firstName, last_name: data.lastName, role_id: roleId, manager_id: mgrId}).then(([data]) => {
+        employeeInfo();
+        }).catch(err => console.log(err))
+    }
+  })
 }
 
-// function updateEmployee(){
-//   inquirer.prompt([
-//     {
-//       type: "list",
-//       message: "Update Profile for:",
-//       choices: ['John Doe', 'Mike Chan', 'Ashley Rodriguez', 'Kevin Tupik', 'Kunal Singh', 'Malia Brown', 'Sarah Lourd', 'Tom Allen'],
-//       name: 'profile',
-//     },
-//     {
-//       type: 'list',
-//       message: 'New Role: ',
-//       choices: ['Sales Lead', 'Sales Person', 'Lead Engineer', 'Software Engineer', 'Account Manager', 'Accountant', 'Legal Team Lead', 'Lawyer'],
-//       name: 'newRole'
-//     }
-//   ]).then(data => {
-//     switch(data.profile){
-//       case 'John Doe':
-//         data.profile = 'John';
-//         break;
-//       case 'Mike Chan':
-//         data.profile = '2';
-//         break;
-//       case 'Ashley Rodriguez':
-//         data.profile = '3';
-//         break;
-//       case 'Kevin Tupik':
-//         data.profile = '4';
-//         break;
-//       case 'Kunal Singh':
-//         data.rol ='5';
-//         break;
-//       case 'Malia Brown':
-//         data.profile = '6';
-//         break;
-//       case 'Sarah Lourd':
-//         data.profile = '7';
-//         break;
-//       case 'Tom Allen':
-//         data.profile ='8';
-//         break;
-//     }
-//     switch(data.newRole){
-//       case 'Salesperson':
-//       data.newRole = '2';
-//       break;
-//     }
-//     db_connect.promise().query('UPDATE employee SET ?  WHERE ? ', {role_id: data.newRole, first_name: data.profile}).then(([data]) => {
-//     start();
-//     })
-//   }).catch(err => console.log(err))
-// }
+function updateEmployee(){
+  // UPDATE employee SET role_id = ? WHERE id = ?`
+}
 
 function viewRoles(){
   db_connect.promise().query('SELECT * FROM role').then(([data]) => {
@@ -189,6 +147,12 @@ function viewRoles(){
 }
 
 function addRole(){
+  db_connect.promise().query('SELECT * FROM department').then(([data]) => {
+    for (let i = 0; i < data.length; i++) {
+     dpt.push(data[i].name);
+     dptIdNum.push(data[i].id);
+    }
+  }).catch(err => console.log(err))
   inquirer.prompt([
     {
       type:'input',
@@ -201,18 +165,18 @@ function addRole(){
       name: "salary"
     },
     {
-      type:'input',
-      message: "Department ID: ",
-      name: "deptId"
+      type:'list',
+      message: 'Which department does this role belong to?',
+      choices: dpt,
+      name: "dpt"
     },
   ]).then(data => {
-    db_connect.promise().query('INSERT INTO role SET ?', {title: data.title, salary: data.salary, department_id: data.deptId}).then(([data]) => {
-    console.table(data);
-    start();
-    })
-  }).catch(err => console.log(err))
+      let dptId = dpt.indexOf(data.dpt) + 1
+      db_connect.promise().query('INSERT INTO role SET ?', {title: data.title, salary: data.salary, department_id: dptId}).then(([data]) => {
+        viewRoles();
+        }).catch(err => console.log(err))
+})
 }
-
 
 function allDepartments(){
     db_connect.promise().query('SELECT * FROM department').then(([data]) => {
@@ -230,7 +194,7 @@ function addDepartment(){
     }
   ]).then(data => {
     db_connect.promise().query('INSERT INTO department SET ?', {name: data.title}).then(([data]) => {
-    start();
+    allDepartments();
     })
   }).catch(err => console.log(err))
 }
