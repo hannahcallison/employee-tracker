@@ -39,19 +39,19 @@ function start (){
         employeeInfo();
         break;
       case 'Add Employee':
-        // addEmployee();
+        addEmployee();
         break;
       case 'Update Employee Role':
         // updateEmployee();
         break;
       case 'View All Roles':
-        // viewRoles();
+        viewRoles();
         break;
       case 'Add Role':
-        // addRole();
+        addRole();
         break;
       case 'View All Departments':
-        // allDepartments();
+        allDepartments();
         break;
       case 'Add Department':
         addDepartment();
@@ -70,6 +70,49 @@ function employeeInfo(){
   }).catch(err => console.log(err))
 }
 
+function addEmployee(){
+
+}
+
+function viewRoles(){
+  db_connect.promise().query('SELECT * FROM role').then(([data]) => {
+    console.table(data)
+    start();
+  }).catch(err => console.log(err))
+}
+
+function addRole(){
+  inquirer.prompt([
+    {
+      type:'input',
+      message: "Role Title: ",
+      name: "title"
+    },
+    {
+      type:'input',
+      message: "Salary: ",
+      name: "salary"
+    },
+    {
+      type:'input',
+      message: "Department ID: ",
+      name: "deptId"
+    },
+  ]).then(data => {
+    db_connect.promise().query('INSERT INTO role SET ?', {title: data.title, salary: data.salary, department_id: data.deptId}).then(([data]) => {
+    console.table(data);
+    start();
+    })
+  }).catch(err => console.log(err))
+}
+
+
+function allDepartments(){
+    db_connect.promise().query('SELECT * FROM department').then(([data]) => {
+      console.table(data)
+      start();
+    }).catch(err => console.log(err))
+}
 
 function addDepartment(){
   inquirer.prompt([
@@ -78,13 +121,17 @@ function addDepartment(){
       message: "Department Title: ",
       name: "title"
     }
-  ]).then(answers => {
-    db_connect.promise().query('INSERT INTO department SET ?', answers.title).then(([data]) => {
-    console.table(data)
+  ]).then(data => {
+    db_connect.promise().query('INSERT INTO department SET ?', {name: data.title}).then(([data]) => {
     start();
     })
   }).catch(err => console.log(err))
 }
+
+
+
+
+
 
 // db.query???
 // connection??
