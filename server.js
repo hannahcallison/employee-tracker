@@ -141,13 +141,11 @@ async function addEmployee(){
 async function updateEmployee(){
 
   await db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
-    console.log('data', data);
     for (let i = 0; i < data.length; i++) {
      emp.push(`${data[i].first_name} ${data[i].last_name}`);
      empIdNum.push(data[i].id);
     }
   }).catch(err => console.log(err))
-  console.log('emp',emp);
 
   await db_connect.promise().query('SELECT * FROM role').then(([data]) => {
     for (let i = 0; i < data.length; i++) {
@@ -155,8 +153,6 @@ async function updateEmployee(){
      newRoleIdNum.push(data[i].id);
     }
   }).catch(err => console.log(err));
-  console.log('newRole', newRole);
-  console.log('newRoleIdNum', newRoleIdNum);
 
   inquirer.prompt([
     {
@@ -173,9 +169,7 @@ async function updateEmployee(){
     },
   ]).then(data => {
     let newRoleId = newRole.indexOf(data.newRole) + 1
-    console.log('newRoleId', newRoleId);
     let empId = emp.indexOf(data.emp) + 1
-    console.log('empId', empId);
     db_connect.promise().query('UPDATE employee SET ?', {role_id:newRoleId}, 'WHERE ?',{id:empId}).then(([data]) => {
       employeeInfo();
       }).catch(err => console.log(err))
