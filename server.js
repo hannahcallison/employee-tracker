@@ -81,8 +81,8 @@ function employeeInfo(){
   }).catch(err => console.log(err))
 }
 
-function addEmployee(){
-  db_connect.promise().query('SELECT * FROM role').then(([data]) => {
+async function addEmployee(){
+  await db_connect.promise().query('SELECT * FROM role').then(([data]) => {
 
     for (let i = 0; i < data.length; i++) {
      roles.push(data[i].title);
@@ -90,7 +90,7 @@ function addEmployee(){
     }
   }).catch(err => console.log(err))
 
-  db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
+  await db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
     for (let i = 0; i < data.length; i++) {
      mgr.push(`${data[i].first_name} ${data[i].last_name}`);
      mgrIdNum.push(data[i].id);
@@ -138,21 +138,25 @@ function addEmployee(){
   })
 }
 
-function updateEmployee(){
+async function updateEmployee(){
 
-  db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
+  await db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
+    console.log('data', data);
     for (let i = 0; i < data.length; i++) {
      emp.push(`${data[i].first_name} ${data[i].last_name}`);
      empIdNum.push(data[i].id);
     }
   }).catch(err => console.log(err))
+  console.log('emp',emp);
 
-  db_connect.promise().query('SELECT * FROM role').then(([data]) => {
+  await db_connect.promise().query('SELECT * FROM role').then(([data]) => {
     for (let i = 0; i < data.length; i++) {
      newRole.push(data[i].title);
      newRoleIdNum.push(data[i].id);
     }
   }).catch(err => console.log(err));
+  console.log('newRole', newRole);
+  console.log('newRoleIdNum', newRoleIdNum);
 
   inquirer.prompt([
     {
@@ -169,7 +173,9 @@ function updateEmployee(){
     },
   ]).then(data => {
     let newRoleId = newRole.indexOf(data.newRole) + 1
+    console.log('newRoleId', newRoleId);
     let empId = emp.indexOf(data.emp) + 1
+    console.log('empId', empId);
     db_connect.promise().query('UPDATE employee SET ?', {role_id:newRoleId}, 'WHERE ?',{id:empId}).then(([data]) => {
       employeeInfo();
       }).catch(err => console.log(err))
@@ -177,14 +183,14 @@ function updateEmployee(){
 }
 
 function viewRoles(){
-  db_connect.promise().query('SELECT * FROM role').then(([data]) => {
+    db_connect.promise().query('SELECT * FROM role').then(([data]) => {
     console.table(data)
     start();
   }).catch(err => console.log(err))
 }
 
-function addRole(){
-  db_connect.promise().query('SELECT * FROM department').then(([data]) => {
+async function addRole(){
+  await db_connect.promise().query('SELECT * FROM department').then(([data]) => {
     for (let i = 0; i < data.length; i++) {
      dpt.push(data[i].name);
      dptIdNum.push(data[i].id);
