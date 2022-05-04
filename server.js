@@ -7,8 +7,10 @@ const mgr =[];
 const mgrIdNum =[];
 const dpt = [];
 const dptIdNum = [];
-const emp =[];
+const emp = [];
 const empIdNum = [];
+const newRole = [];
+const newRoleIdNum = [];
 require('dotenv').config();
 
 
@@ -109,7 +111,7 @@ function addEmployee(){
     },
     {
       type: "list",
-      message: "Employee Role ID: ",
+      message: "Employee Role: ",
       choices: roles,
       name: "role",
     },
@@ -137,7 +139,41 @@ function addEmployee(){
 }
 
 function updateEmployee(){
-  // UPDATE employee SET role_id = ? WHERE id = ?`
+
+  db_connect.promise().query('SELECT * FROM employee').then(([data]) => {
+    for (let i = 0; i < data.length; i++) {
+     emp.push(`${data[i].first_name} ${data[i].last_name}`);
+     empIdNum.push(data[i].id);
+    }
+  }).catch(err => console.log(err))
+
+  db_connect.promise().query('SELECT * FROM role').then(([data]) => {
+    for (let i = 0; i < data.length; i++) {
+     newRole.push(data[i].title);
+     newRoleIdNum.push(data[i].id);
+    }
+  }).catch(err => console.log(err));
+
+  inquirer.prompt([
+    {
+      type: "list",
+      message: "Which employee would you like to update?",
+      choices: emp,
+      name: "emp",
+    },
+    {
+      type: "list",
+      message: "Which new role would you like to assign? ",
+      choices: newRole,
+      name: "newRole",
+    },
+  ]).then(data => {
+    let newRoleId = newRole.indexOf(data.newRole) + 1
+    let empId = emp.indexOf(data.emp) + 1
+    db_connect.promise().query('UPDATE employee SET ?', {role_id:newRoleId}, 'WHERE ?',{id:empId}).then(([data]) => {
+      employeeInfo();
+      }).catch(err => console.log(err))
+  })
 }
 
 function viewRoles(){
